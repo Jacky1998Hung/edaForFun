@@ -18,6 +18,7 @@ what are we going now:
 #include <unordered_map>
 #include <queue>
 #include <set>
+#include<algorithm>
 struct Schedule {
     int latency;
     std::vector<std::vector<std::shared_ptr<Node>>> cycles;
@@ -202,8 +203,6 @@ public:
             return AND;
         }
         else return OR;
-
-
     }
     
 //ya
@@ -211,7 +210,74 @@ void show(){
     for(const auto& pair: nodeMap){
         std::cout << pair.second->returnName() << " : " << pair.second->returnNodeType() << std::endl;
     }
+    
 }
+void showWhetherItIsTheFirstGate(){
+    for(const auto& pair: nodeMap)
+    {
+        std::cout << "Name : " << pair.first << " has intput : ";
+        for(const auto& input : pair.second->getInputs())
+        {
+            std::cout << input->returnName() << " ";
+        }
+        if(pair.second->getInputs().empty()){
+                std::cout << pair.second->returnNodeType();
+            }
+        std::cout << std::endl;
+    }
+}
+void checkFirstGate(){
+    for(const auto& pair: nodeMap)
+    {   
+        int flagFirst = 0;
+        for(const auto& input: pair.second->getInputs())
+        {
+            //std::cout << input->returnNodeType();
+            if(input->returnNodeType() == "input")
+            {
+                flagFirst = 1;
+            }
+        }
+         if(flagFirst == 1)
+            {
+                firstGates.push_back(pair.second);
+            }
+        std::cout << std::endl;
+    }
+    for(const auto& node : firstGates)
+    {
+        std::cout << node->returnName() << std::endl;
+    }
+}
+int DFS(std::string nodeName){
+    if(visited[nodeName])return longestPathTo[nodeName];
+    visited[nodeName] = true;
+    int maxPath = 0;
+    for(const auto& neighbor : nodeMap[nodeName]->getOutputs()) { 
+        maxPath = std::max(maxPath, DFS(neighbor->returnName()));
+    }
+    longestPathTo[nodeName] = maxPath + 1;
+    maxPathlength = std::max(maxPathlength, longestPathTo[nodeName]);
+    return longestPathTo[nodeName];
+}
+void computeCriticalPath() {
+    for(auto node : firstGates) { // firstGates is a vector of nodes that are first gates after input
+        if(!visited[node->returnName()]) {
+            DFS(node->returnName());
+        }
+    }
+}
+void showPath(){
+    for(const auto& node : firstGates)
+    {
+        std::cout << longestPathTo[node->returnName()];
+    }
+}
+
 private:
     std::map<std::string, std::shared_ptr<Node>>nodeMap;
+    std::map<std::string, int>longestPathTo;
+    std::map<std::string, bool>visited;
+    std::vector<std::shared_ptr<Node>>firstGates;
+    int maxPathlength = 0;
 };

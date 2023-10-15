@@ -8,14 +8,11 @@ int main(){
     std::string str = "a";
     Circuit sample02;
     sample02.parseBlif("aoi_benchmark/aoi_sample02.blif");
-    std::map<GateType, int> resourceConstraints = {
-        {AND, 2},
-        {OR, 1},
-        {NOT, 1},
-
-        // ... add other gate type constraints as needed
-    };
-    sample02.show();
+    
+    //sample02.showWhetherItIsTheFirstGate();
+    sample02.checkFirstGate();
+    sample02.computeCriticalPath();
+    sample02.showPath();
     //list_scheduling(resourceConstraints);
 
 }

@@ -29,7 +29,6 @@ public:
     {
         return inputs_;
     }
-    
 protected:
     std::string name_;
     std::string nodeType_;
