@@ -87,8 +87,6 @@ public:
                             delay_queue_copy.pop();
                             
                          }
-                         std::cout << "dfd";
-                        std::cout << ifAlready << std::endl;
                         if(ifAlready == 0)
                         {
                             delay_queue.push(output_node);
@@ -113,6 +111,7 @@ public:
                 }
             }
         }
+        max_cycle = current_cycle - 1;
 
 
 
@@ -578,12 +577,41 @@ void showList()
         std::cout << scheduled_node.node->returnName() <<std::endl;
     }
 }
-void showNodeCycle(){
-    for(const auto& sn : schedule)
-    {
-        std::cout << sn.node->returnName() << " : " << sn.scheduled_cycle << std::endl;
+void showNodeCycle() {
+    std::cout << "Heuristic Scheduling Result" << std::endl;
+    for (int cycle = 1; cycle <= max_cycle; cycle++) {
+        
+        std::cout << cycle << ": ";
+        
+        for (auto type : {GateType::AND, GateType::OR, GateType::NOT}) {
+            std::cout << "{";
+            bool firstPrint = true;  // Used to track whether we are printing the first gate in the current cycle and type group
+            
+            for (const auto& node : schedule) {
+                if (node.scheduled_cycle == cycle && node.node->returnGateType() == type) {
+                    if (!firstPrint) {
+                        std::cout << " ";
+                    }
+                    std::cout << node.node->returnName();
+                    firstPrint = false;
+                }
+            }
+            
+            std::cout << "} ";
+        }
+        std::cout << std::endl;
     }
+    std::cout << "LATENCY: " << max_cycle << std::endl;
+    std::cout << "END" << std::endl;
 }
+
+/*Heuristic Scheduling Result
+1: {h} {j} {i}
+2: {l m} {g} {}
+3: {n} {k} {p}
+4: {o} {} {q}
+LATENCY: 4
+END*/
 
 private:
     std::map<std::string, std::shared_ptr<Node>>nodeMap;
@@ -594,5 +622,6 @@ private:
     std::vector<ScheduledNode> schedule;
     int and_constraint, or_constraint, not_constraint;
     int and_temp, or_temp, not_temp;
+    int max_cycle;
 };
 //if we 
