@@ -4,12 +4,15 @@
 enum GateType{ AND, OR, NOT, UNKNOWN};
 class Node : public std::enable_shared_from_this<Node> {
 public:
+    bool is_scheduled = false;
     Node(const std::string& name, const std::string& nodeType):name_(name), nodeType_(nodeType){}
     virtual ~Node() = default;  // Virtual destructor is crucial for polymorphism.
     virtual bool evaluate() const = 0;  // Pure virtual function.
     virtual std::string returnName() const {}
     virtual std::string returnType()const{}
     virtual std::string returnNodeType()const{}
+    virtual GateType returnGateType()const{
+    }
     void addOutput(const std::shared_ptr<Node>& node)
     {
         outputs_.push_back(node);
@@ -29,7 +32,6 @@ public:
     {
         return inputs_;
     }
-    
 protected:
     std::string name_;
     std::string nodeType_;
@@ -41,7 +43,7 @@ protected:
 
 class InputNode : public Node {
 public:
-    InputNode(const std::string& name, const std::string& nodeType):Node(name, nodeType){}
+    InputNode(const std::string& name, const std::string& nodeType):Node(name, nodeType){is_scheduled = true;}
     bool evaluate() const override {
         // Logic to produce an input signal.
     }
@@ -99,7 +101,7 @@ public:
     bool evaluate() const override {
         // Evaluate and potentially store/pass-through the input signal.
     }
-    GateType returnGateType(){
+    GateType returnGateType()const override{
         return type_;
     }
 
