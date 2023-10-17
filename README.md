@@ -6,8 +6,8 @@ C++ compiler with C++17 support (e.g., g++)
 
 ## Installation
 simply run :
-$chmod +x install.sh
-$./install.sh
+$>chmod +x install.sh
+$>./install.sh
 
 After compilation, the mlrcs binary will be generated in the current directory. You can run it using:
 ./mlrcs 
